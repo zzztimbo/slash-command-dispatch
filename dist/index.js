@@ -415,6 +415,7 @@ const github = __importStar(__nccwpck_require__(5438));
 const util_1 = __nccwpck_require__(3837);
 const command_helper_1 = __nccwpck_require__(9622);
 const github_helper_1 = __nccwpck_require__(446);
+const decode = (str) => Buffer.from(str, 'base64').toString('binary');
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -435,6 +436,14 @@ function run() {
             // Check required inputs
             if (!inputs.token) {
                 throw new Error(`Missing required input 'token'.`);
+            }
+            // detect if token is base64 encoded
+            if (inputs.token.startsWith('ghp_')) {
+                core.info('token was not base64 encoded');
+            }
+            else {
+                core.info('base64 decoding token');
+                inputs.token = decode(inputs.token).trim();
             }
             // Get configuration for registered commands
             const config = (0, command_helper_1.getCommandsConfig)(inputs);
